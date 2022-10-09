@@ -1,21 +1,34 @@
 const express = require('express')
+const exphbs = require('express-handlebars')
+const axios = require("axios").default;
+const fs = require('fs')
+const {getProductos, getProductoById, saveProducto, modifyProductoById, deleteProductoById, deleteAllProducts,  } = require('./contenedores/contenedor');
+
 const app = express()
 
-const personas = []
+const productos = []
 
-app.use(express.urlencoded({ extended: true }))
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static('public'));
 
+
+
+app.engine('handlebars', exphbs.engine())
+app.set('view engine', 'handlebars');
 app.set('views', './views');
-app.set('view engine', 'ejs');
 
-app.get('/', (req, res) => {
-    res.render('inicio', { personas });
+app.get('/', async (req, res) => {
+    const productos = await getProductos().catch();
+    res.render('formulario', {productos});
 });
 
-app.post('/personas', (req, res) => {
-    personas.push(req.body)
-    console.log(personas)
-    res.redirect('/')
+app.post('/productos', async (req, res) => {
+    // productos.push(req.body)
+    const producto = req.body
+    const productoNuevo = await saveProducto(producto).catch()
+    const productos = await getProductos().catch();
+    console.log(productos)
+    res.render('historial', {productos});
 });
 
 const PORT = 8080
