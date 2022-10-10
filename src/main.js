@@ -22,6 +22,11 @@ app.get('/', async (req, res) => {
     res.render('formulario', {productos});
 });
 
+app.get('/productos', async (req, res) => {
+    const productos = await getProductos().catch();
+    res.render('historial', {productos});
+});
+
 app.post('/productos', async (req, res) => {
     // productos.push(req.body)
     const producto = req.body
@@ -30,6 +35,7 @@ app.post('/productos', async (req, res) => {
     console.log(productos)
     res.render('historial', {productos});
 });
+
 
 const PORT = 8080
 const server = app.listen(PORT, () => {
